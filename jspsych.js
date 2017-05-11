@@ -1731,7 +1731,7 @@ jsPsych.pluginAPI = (function() {
   });
 
   module.getKeyboardResponse = function(parameters) {
-    //parameters are: callback_function, valid_responses, rt_method, persist, audio_context, audio_context_start_time, allow_held_key?
+    //parameters are: callback_function, valid_responses, rt_method, performance_start_time, persist, audio_context, audio_context_start_time, allow_held_key?
 
     parameters.rt_method = (typeof parameters.rt_method === 'undefined') ? 'date' : parameters.rt_method;
     if (parameters.rt_method != 'date' && parameters.rt_method != 'performance' && parameters.rt_method != 'audio') {
@@ -1743,7 +1743,7 @@ jsPsych.pluginAPI = (function() {
     if (parameters.rt_method == 'date') {
       start_time = (new Date()).getTime();
     } else if (parameters.rt_method == 'performance') {
-      start_time = performance.now();
+      start_time = parameters.performance_start_time || performance.now();
     } else if (parameters.rt_method == 'audio') {
       start_time = parameters.audio_context_start_time;
     }

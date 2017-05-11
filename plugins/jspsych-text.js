@@ -43,9 +43,6 @@ jsPsych.plugins.text = (function() {
     // it with the output of the function
     trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
 
-    // set the HTML of the display target to replaced_text.
-    display_element.innerHTML = trial.text;
-
     var after_response = function(info) {
 
       display_element.innerHTML = ''; // clear the display
@@ -72,19 +69,32 @@ jsPsych.plugins.text = (function() {
 
     };
 
-    // check if key is 'mouse'
-    if (trial.choices == 'mouse') {
-      display_element.addEventListener(mouse_listener);
-      var start_time = (new Date()).getTime();
-    } else {
-      jsPsych.pluginAPI.getKeyboardResponse({
-        callback_function: after_response,
-        valid_responses: trial.choices,
-        rt_method: 'date',
-        persist: false,
-        allow_held_key: false
-      });
+    var draw_and_listen = function() {
+
+      // execution time of animation frame callback
+      var start_time = performance.now();
+
+      // set the HTML of the display target to the trial text
+      display_element.innerHTML = trial.text;
+
+      // check if key is 'mouse'
+      if (trial.choices == 'mouse') {
+        display_element.addEventListener(mouse_listener);
+        start_time = (new Date()).getTime();
+      } else {
+        jsPsych.pluginAPI.getKeyboardResponse({
+          callback_function: after_response,
+          valid_responses: trial.choices,
+          rt_method: 'performance',
+          performance_start_time: start_time,
+          persist: false,
+          allow_held_key: false
+        });
+      }
+
     }
+
+    window.requestAnimationFrame(draw_and_listen);
 
   };
 
